@@ -10,6 +10,9 @@
 #include "SettingsDialog.h"
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    #ifdef __EMSCRIPTEN__
+    setNordPalette(app);   
+    #endif
 
     QString theme;
     

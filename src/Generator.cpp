@@ -91,18 +91,26 @@ void Generator::GenBtIsPressed()
         {
             for (size_t j = 0; j < Size; j++)
             {
-                mat[i][j] = QRandomGenerator::global()->bounded(RandFrom, RandTo);
+                mat[i][j] = QRandomGenerator::global()->bounded(RandFrom, RandTo); // /srv/emsdk/upstream/emscripten/emrun --port 3030  matrix.html
+
             }
         }        
-        try
-        {
-            revmat = Matrix::GetInverted(mat);
+        #ifdef __EMSCRIPTEN__
+        bool isErr = false;
+        revmat = Matrix::GetInvertedFORSPECIALUSE(mat, isErr); // scp  /home/podushka/projects/matrix/build/WebAssembly_Qt_6_7_2_multi_threaded-Release/sss.tar.gz  root@150.241.96.190:/srv
+
+        if (isErr) {
+            IsGenerationComplited = false;
+            continue;
         }
-        catch(const std::exception& e)
-        {
+        #else
+        try {
+            revmat = Matrix::GetInverted(mat);
+        } catch (const std::exception& e) {
             std::cerr << e.what() << '\n';
-            IsErr = 1;
-        }        
+            IsErr = true;
+        }
+        #endif
         if (IsErr)  
         {
             ContainNonInt = 1;

@@ -247,6 +247,65 @@ std::vector<std::vector<double>> Matrix::GetInverted(std::vector<std::vector<dou
     return invertedMat;
 }
 
+std::vector<std::vector<double>> Matrix::GetInvertedFORSPECIALUSE(std::vector<std::vector<double>> mat, bool &isError)
+{
+int n = mat.size();
+    isError = false;
+
+    if (n == 0 || mat[0].size() != n) {
+        isError = true; // Матрица не квадратная
+        return std::vector<std::vector<double>>(n, std::vector<double>(n, 0.0));
+    }
+
+    std::vector<std::vector<double>> extendedMat(n, std::vector<double>(2 * n, 0.0));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            extendedMat[i][j] = mat[i][j];
+        }
+        for (int j = n; j < 2 * n; ++j) {
+            extendedMat[i][j] = (i == (j - n)) ? 1.0 : 0.0;
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (extendedMat[i][i] == 0) {
+            bool swapped = false;
+            for (int k = i + 1; k < n; ++k) {
+                if (extendedMat[k][i] != 0) {
+                    std::swap(extendedMat[i], extendedMat[k]);
+                    swapped = true;
+                    break;
+                }
+            }
+            if (!swapped) {
+                isError = true; // Матрица вырожденная
+                return std::vector<std::vector<double>>(n, std::vector<double>(n, 0.0));
+            }
+        }
+
+        double diagElement = extendedMat[i][i];
+        for (int j = 0; j < 2 * n; ++j) {
+            extendedMat[i][j] /= diagElement;
+        }
+        for (int k = 0; k < n; ++k) {
+            if (k != i) {
+                double factor = extendedMat[k][i];
+                for (int j = 0; j < 2 * n; ++j) {
+                    extendedMat[k][j] -= factor * extendedMat[i][j];
+                }
+            }
+        }
+    }
+
+    std::vector<std::vector<double>> invertedMat(n, std::vector<double>(n, 0.0));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            invertedMat[i][j] = extendedMat[i][j + n];
+        }
+    }
+
+    return invertedMat;
+}
 
 #include <QRandomGenerator>
 #include <QDebug>

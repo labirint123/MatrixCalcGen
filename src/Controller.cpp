@@ -553,8 +553,10 @@ void Controller::InitLayout()
 
     secondLb = new QLabel("Матрица 2");
     secondLb->setAlignment(Qt::AlignCenter);
-    
-    ModsLH->addWidget(setts);
+    #ifndef __EMSCRIPTEN__
+     ModsLH->addWidget(setts);
+    #endif
+   
     ModsLH->addWidget(Mode1B);
     ModsLH->addWidget(Mode2B);
     ModsLH->addWidget(ModeGen);

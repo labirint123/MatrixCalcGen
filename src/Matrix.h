@@ -17,6 +17,7 @@ public:
     Matrix& operator=(const Matrix& other); 
     Matrix Inverted();
     static std::vector<std::vector<double>> GetInverted(std::vector<std::vector<double>> mat);
+    static std::vector<std::vector<double>> GetInvertedFORSPECIALUSE(std::vector<std::vector<double>> mat, bool& isError);
     bool ResizeMatrix(int collons, int rows);
     void SetIsChangable(bool IsChangable);
     int CalcDet();
